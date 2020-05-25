@@ -390,13 +390,15 @@ def gen_distribution(cfg):
 
     # burn extra coins
     max_coin = 10000000000000000000
-    total_dist = sum(node['bonded_coin'] + node['unbonded_coin'] for node in cfg['nodes'])
+    total_dist = sum(node['bonded_coin'] + node['unbonded_coin'] for node in cfg['nodes']) + 5000000000000000000
+    assert max_coin >= total_dist
     burned = max_coin - total_dist - cfg['expansion_cap']
     if burned > 0:
         dist['0x0000000000000000000000000000000000000000'] = str(burned)
-
     for node in cfg['nodes']:
         dist[node['staking'][1]] = str(node['unbonded_coin'])
+    # used to test client_cli
+    dist["0xeb91b3edb046c560ec82b846cddd5eb23ae5e271"] = "5000000000000000000"
     return dist
 
 
