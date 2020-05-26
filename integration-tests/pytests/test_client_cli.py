@@ -6,13 +6,6 @@ from client_cli import Wallet, Transaction
 
 PASSPHRASE = "123456"
 
-def set_env():
-    os.environ['CRYPTO_CHAIN_ID'] = 'test-chain-y3m1e6-AB'
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    father_dir = os.path.dirname(current_dir)
-    storage_path = os.path.join(father_dir, "data", "wallet")
-    os.environ['CRYPTO_CLIENT_STORAGE'] = storage_path
-    os.environ['CRYPTO_GENESIS_HASH'] = '09A49B6D51D0204198609D632444A54DE261B54C2FC1D4A79B7C3705FBEEB2E3'
 
 def delete_all_wallet():
     wallet_names = Wallet.list()
@@ -31,7 +24,6 @@ def write_wallet_info_to_file(wallet_list, from_file = "/tmp/from_file"):
 
 @pytest.mark.zerofee
 def test_wallet_basic():
-    set_env()
     # 1. create wallet
     wallet_name_list = ["test1", "test2"]
     wallet_list = []
@@ -71,7 +63,6 @@ def test_wallet_basic():
 
 @pytest.mark.zerofee
 def test_address():
-    set_env()
     delete_all_wallet()
     w1 = Wallet("test-address-1", PASSPHRASE)
     w1.new("hd")
@@ -93,7 +84,6 @@ def test_address():
 
 @pytest.mark.zerofee
 def test_wallet_restore_basic():
-    set_env()
     delete_all_wallet()
     wallet = Wallet("test", PASSPHRASE)
     wallet.new("basic")
@@ -103,8 +93,7 @@ def test_wallet_restore_basic():
 
 
 def init_wallet():
-    set_env()
-    m = "brick seed fatigue flee earn rural decline switch number cause wheat employ unknown betray tray"""
+    m = "brick seed fatigue flee earn rural decline switch number cause wheat employ unknown betray tray"
     wallet_sender = Wallet.restore("Default", PASSPHRASE, m)
     wallet_sender.create_address("staking")
     wallet_sender.create_address("staking")
@@ -116,10 +105,11 @@ def init_wallet():
 
 @pytest.mark.zerofee
 def test_transactions():
+    os.environ['CRYPTO_CLIENT_TENDERMINT'] = 'ws://localhost:26667/websocket'
     wallet_sender, _wallet_receiver = init_wallet()
     # test withdraw all unbounded
     tx = Transaction(wallet_sender)
-    staking_address = "0xeb91b3edb046c560ec82b846cddd5eb23ae5e271"
+    staking_address = "0x5e7e1e79d80b861a94598c721598951098dd3825"
     tx.withdraw(staking_address, wallet_sender.create_address())
     i = 0
     while i < 30:
@@ -132,4 +122,4 @@ def test_transactions():
         if i % 10 == 0:
             print("\n", balance)
         i += 1
-    assert balance["available"] == 5000000000000000000
+    assert balance["available"] == 500000000000000000

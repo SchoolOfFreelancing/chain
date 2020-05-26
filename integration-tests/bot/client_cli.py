@@ -23,9 +23,6 @@ def run(cmd, args=None):
     return remove_color(output)
 
 
-"""
-input 100.0100000 return 100 * 100000000 + 100000 = 1000100000
-"""
 def to_coin(balance):
     # 8 decimal
     MAX_COIN_DECIMALS = 100000000
@@ -118,7 +115,6 @@ class Wallet():
     """
     @classmethod
     def restore_basic(cls, name, passphrase, private_view_key):
-        # TODO: how to get private_view_key
         cmd = ["client-cli", "wallet", "restore-basic", "-n", name]
         args = [passphrase, passphrase, private_view_key]
         text = run(cmd, args)
